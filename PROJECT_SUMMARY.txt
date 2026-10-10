@@ -1,0 +1,317 @@
+FPS SHOOTER - PROJECT SUMMARY
+=============================
+
+PROJECT OVERVIEW
+----------------
+A browser-based first-person shooter built with Three.js featuring precise hitbox detection, 
+multiple enemy types, particle effects, and a complete game loop.
+
+TECHNOLOGY STACK
+----------------
+- Three.js (r186) - 3D rendering engine
+- Vite - Build tool and dev server
+- Vanilla JavaScript (ES Modules) - No framework overhead
+- WebGL - Hardware accelerated graphics
+- Pointer Lock API - FPS mouse controls
+
+CURRENT IMPLEMENTATION
+----------------------
+
+CORE SYSTEMS:
+
+1. HitboxSystem (src/Hitbox.js)
+   - Raycast-based precision hit detection
+   - Per-mesh hitbox registration with damage multipliers
+   - Head (3x damage) / Body (1x damage) zones
+   - Debug visualization support
+   - HitboxVisualizer for hit feedback rings
+
+2. Player (src/Player.js)
+   - Full FPS movement: WASD, sprint, jump, crouch-ready
+   - Pointer lock mouse look with sensitivity control
+   - Gun model with muzzle flash animation
+   - Health/ammo/score management
+   - Collision detection with environment
+   - Audio feedback via Web Audio API (procedural tones)
+
+3. TargetManager (src/Target.js)
+   - 4 enemy types with unique stats:
+     * Standard: 50 HP, 100 pts, 3 speed
+     * Armored: 150 HP, 250 pts, 2 speed
+     * Fast: 30 HP, 150 pts, 6 speed
+     * Boss: 500 HP, 1000 pts, 1.5 speed
+   - AI: Seek player, look-at targeting
+   - Procedural spawning with difficulty scaling
+   - Per-part hitboxes (head/body) with multipliers
+
+4. ParticleSystem (src/Particles.js)
+   - Hit spark particles with physics
+   - Expanding hit rings (color-coded by damage)
+   - Explosion effects on kill
+   - Bullet trails
+   - Muzzle flashes
+   - Automatic lifecycle management
+
+5. Environment (src/main.js)
+   - Dynamic lighting: sun, fill, rim lights with shadows
+   - Procedural floor with subtle displacement
+   - Grid helper for orientation
+   - 8 structural walls + 20 random props for cover
+   - Fog for atmosphere and performance
+
+GAME LOOP:
+- Fixed timestep with delta clamping (max 0.1s)
+- Player update → Targets update → Particles update → Render
+- Auto-spawning targets (max 15, interval 1.5-3.5s)
+- Score/health/ammo UI updates
+
+UI ELEMENTS:
+- Center crosshair
+- Top-left stats (Score, Health, Ammo)
+- Damage screen flash indicator
+- Start menu / Game over screens
+
+WHAT'S NEEDED FOR BETA
+----------------------
+
+HIGH PRIORITY (Blockers):
+[ ] Audio system - Current procedural tones are placeholder; need real sound effects
+[ ] Weapon system - Only single gun; need multiple weapons, reloading animation, spread/recoil
+[ ] Enemy AI - Basic seek only; need pathfinding, attack patterns, varied behaviors
+[ ] Level design - Single arena; need multiple maps, objectives, progression
+[ ] Multiplayer - Currently single-player only
+[ ] Save/load system - No persistence
+[ ] Settings menu - Graphics, controls, sensitivity options
+
+MEDIUM PRIORITY:
+[ ] Particle optimization - Pool objects instead of create/destroy
+[ ] Hit registration - Add lag compensation for future multiplayer
+[ ] Animation system - Tween.js for smooth transitions
+[ ] Post-processing - Bloom, SSAO, color grading
+[ ] Mobile touch controls - Virtual joysticks
+[ ] Performance profiling - Stats.js integration
+
+LOW PRIORITY (Polish):
+[ ] Screen shake on hit/explosion
+[ ] Kill feed / combo system
+[ ] Weapon skins / customization
+[ ] Leaderboards
+[ ] Tutorial/onboarding
+[ ] Accessibility options
+
+POTENTIAL IMPROVEMENTS
+----------------------
+
+ARCHITECTURE:
+1. ECS (Entity Component System) - Replace inheritance with composition
+2. System-based architecture - Separate render, physics, AI, input systems
+3. Asset management - Loader with caching, progress tracking
+4. State machine - Clean menu/game/pause/death states
+5. Event bus - Decouple systems with pub/sub
+
+GAMEPLAY:
+6. Weapon variety - Pistol, AR, Shotgun, Sniper, Rocket Launcher
+7. Movement tech - Slide, dash, wall-run, mantling
+8. Enemy variety - Turrets, snipers, suicide rushers, shield bearers
+9. Power-ups - Health, ammo, damage boost, speed, shield
+10. Objectives - Survival waves, capture points, escort, boss fights
+11. Difficulty scaling - Dynamic difficulty adjustment
+12. Perks/upgrades - Roguelite elements between runs
+
+TECHNICAL:
+13. Instanced rendering - For particles, bullets, repeated props
+14. Frustum culling - Automatic (Three.js) but verify
+15. LOD system - For distant objects
+16. Texture atlasing - Reduce draw calls
+17. Compute shaders - GPU particle simulation
+18. Web Workers - Offload AI, physics
+19. WASM - Physics (Rapier) or heavy computation
+20. Service Worker - Offline support, caching
+
+VISUAL:
+21. PBR materials - Proper textures, normal/roughness/metalness maps
+22. Animations - GLTF models with skeletal animation
+23. VFX - Shaders for muzzle flash, impact, explosions
+24. UI - React/Svelte for complex menus, or stay vanilla
+25. Cinematics - Intro, death cam, kill cam
+
+POTENTIAL ISSUES / PROBLEMS
+---------------------------
+
+PERFORMANCE:
+- Particle creation/destruction every frame → GC pressure
+- No object pooling for bullets, particles, targets
+- Raycasting all hitboxes every shot (O(n) per shot)
+- No spatial partitioning (octree/BVH) for hit detection
+- Shadow map updates every frame for static objects
+
+CODE QUALITY:
+- No TypeScript - runtime errors only caught in browser
+- No unit tests - regression risk
+- No linting/formatting config
+- Tight coupling between systems (Player knows TargetManager)
+- Magic numbers scattered throughout
+- No error boundaries / graceful degradation
+
+GAMEPLAY:
+- No difficulty curve - spawns purely time-based
+- Enemies can stack/overlap
+- No friendly fire / team system
+- Jump physics feel floaty (low gravity)
+- No crouch/prone
+- No lean/peek mechanics
+- Reload is instant (no animation/timing)
+
+BROWSER COMPATIBILITY:
+- Pointer Lock API requires user gesture (click) - handled
+- Web Audio API requires user gesture - handled
+- No fallback for WebGL2 unavailable
+- No mobile support (touch controls)
+- High memory usage on long sessions (leaks possible)
+
+SECURITY:
+- No client-side anti-cheat (irrelevant for SP, critical for MP)
+- No input validation on networked data (future)
+
+GIT SETUP
+---------
+Repository name: fps-shooter-threejs
+Branch: main
+Remote: https://github.com/BigPapiYokai/fps-shooter-threejs.git
+
+FILES TO COMMIT:
+- index.html
+- style.css
+- package.json
+- vite.config.js (if created)
+- src/main.js
+- src/Player.js
+- src/Target.js
+- src/Hitbox.js
+- src/Particles.js
+- PROJECT_SUMMARY.txt
+- .gitignore
+
+TASKS REQUIRING USER INTERVENTION
+=================================
+
+TASK 1: Create GitHub Repository
+--------------------------------
+Since I cannot authenticate to GitHub directly, you need to create the repository:
+
+Step-by-step:
+1. Open https://github.com/new in your browser
+2. Sign in to your BigPapiYokai account if not already
+3. Repository name: "fps-shooter-threejs" (or your preferred name)
+4. Description: "Browser-based FPS with precise hitboxes built in Three.js"
+5. Visibility: Public (or Private if preferred)
+6. DO NOT initialize with README, .gitignore, or license (we have our own)
+7. Click "Create repository"
+8. Copy the repository URL (HTTPS or SSH)
+
+TASK 2: Push to GitHub
+----------------------
+After creating the repo, run these commands in terminal:
+
+```bash
+cd C:\Bang\fps-shooter
+git init
+git add .
+git commit -m "Initial commit: FPS shooter with hitbox system, enemies, particles"
+git branch -M main
+git remote add origin https://github.com/BigPapiYokai/fps-shooter-threejs.git
+git push -u origin main
+```
+
+If using SSH (recommended):
+```bash
+git remote add origin git@github.com:BigPapiYokai/fps-shooter-threejs.git
+```
+
+TASK 3: Install Development Dependencies (Optional but Recommended)
+-------------------------------------------------------------------
+For a better development experience:
+
+```bash
+cd C:\Bang\fps-shooter
+npm install -D typescript @types/three eslint prettier
+```
+
+Then create:
+- tsconfig.json
+- .eslintrc.json
+- .prettierrc
+
+TASK 4: Add Real Assets
+-----------------------
+Current prototype uses procedural geometry. For beta:
+
+1. Create or source 3D models:
+   - Player weapons (GLTF/GLB format)
+   - Enemy models with animations
+   - Environment props
+   - Place in public/models/
+
+2. Create textures:
+   - PBR texture sets (albedo, normal, roughness, metalness, AO)
+   - Place in public/textures/
+
+3. Create audio:
+   - Weapon sounds (shoot, reload, empty)
+   - Enemy sounds (hit, death, footsteps)
+   - Ambient/environment
+   - Place in public/audio/
+
+4. Update code to load assets via THREE.GLTFLoader and TextureLoader
+
+TASK 5: Configure Production Build
+----------------------------------
+1. Create vite.config.js:
+```js
+import { defineConfig } from 'vite'
+export default defineConfig({
+  build: {
+    minify: 'terser',
+    terserOptions: { compress: { drop_console: true } },
+    rollupOptions: { output: { manualChunks: { three: ['three'] } } }
+  },
+  server: { port: 5173, open: true }
+})
+```
+
+2. Add to package.json scripts:
+```json
+"build": "vite build",
+"preview": "vite preview"
+```
+
+3. Test: npm run build && npm run preview
+
+TASK 6: Deploy to Production (Optional)
+---------------------------------------
+Options:
+- GitHub Pages: Enable in repo settings → Pages → Deploy from main branch
+- Netlify: Connect repo, auto-deploys on push
+- Vercel: Import project, zero-config
+- Custom server: Build and serve dist/ folder
+
+LINKS & RESOURCES
+-----------------
+- Three.js Docs: https://threejs.org/docs/
+- Vite Guide: https://vitejs.dev/guide/
+- WebGL Fundamentals: https://webglfundamentals.org/
+- Pointer Lock API: https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API
+- Web Audio API: https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
+- GitHub CLI: https://cli.github.com/ (alternative for repo creation)
+- Rapier Physics (WASM): https://rapier.rs/ (for future physics)
+
+NEXT SESSION RECOMMENDATIONS
+----------------------------
+1. Implement object pooling for particles/bullets
+2. Add TypeScript for type safety
+3. Create weapon system with data-driven config
+4. Implement basic enemy attack (projectile/melee)
+5. Add wave-based spawning with UI
+6. Profile and optimize render loop
+
+END OF SUMMARY

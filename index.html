@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPS Shooter - Three.js</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="ui">
+        <div id="crosshair">+</div>
+        <div id="stats">
+            <span id="score">Score: 0</span>
+            <span id="health">Health: 100</span>
+            <span id="ammo">Ammo: 30/30</span>
+        </div>
+        <div id="damage-indicator"></div>
+    </div>
+    <div id="menu" class="hidden">
+        <h1>FPS SHOOTER</h1>
+        <button id="start-btn">START GAME</button>
+        <p>WASD - Move | Mouse - Look | Click - Shoot | Space - Jump | Shift - Sprint</p>
+    </div>
+    <div id="game-over" class="hidden">
+        <h1>GAME OVER</h1>
+        <p id="final-score">Final Score: 0</p>
+        <button id="restart-btn">PLAY AGAIN</button>
+    </div>
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
